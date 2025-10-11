@@ -44,30 +44,41 @@ Before running the project, make sure you have:
 ```bash
 git clone <repository_url>
 cd paper_portal
+```
 
 2. Create a virtual environment (recommended):
 
+```bash
 python -m venv venv
+```
 
 3. Activate the virtual environment:
 
 Windows:
 
+```bash
 venv\Scripts\activate
+```
 
 4. Install dependencies:
 
+```bash
 pip install -r requirements.txt
+```
 
 5. Run the Flask app:
 
+```bash
 python app.py
+```
 
 6. Access the application:
 
 Open your web browser and go to:
 
+```bash
 http://127.0.0.1:5000/
+```
 
 **Notes**
 
@@ -78,4 +89,3 @@ Ensure uploaded paper files are placed in the designated uploads folder if using
 **License**
 
 This project is open-source and free to use for educational purposes.
-```
