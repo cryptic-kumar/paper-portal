@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title if title else "Paper Portal" }}</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background-color: #f5f6fa;
+        font-family: "Poppins", sans-serif;
+        min-height: 100vh;
+      }
+
+      /* Navbar */
+      .navbar {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 0.8rem 1rem;
+      }
+      .navbar-brand {
+        font-weight: 600;
+        font-size: 1.4rem;
+      }
+      .nav-link {
+        font-weight: 500;
+      }
+      .nav-link:hover {
+        color: #ffc107 !important;
+      }
+
+      /* Cards */
+      .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Buttons */
+      .btn-custom {
+        border-radius: 50px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      .btn-custom:hover {
+        transform: translateY(-2px);
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 1.2rem 0;
+        background: #212529;
+        color: #fff;
+        margin-top: 40px;
+        font-size: 0.9rem;
+      }
+
+      /* Flash Messages */
+      .alert {
+        border-radius: 8px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">📄 Paper Portal</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('auth.register') }}"
+                >Register</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'success' if category=='success' else 'danger' }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+    </div>
+
+    <!-- Page Content -->
+    <div class="container my-5">{% block content %}{% endblock %}</div>
+
+    <!-- Footer -->
+    <footer>© 2025 Paper Portal | Built with Flask & Bootstrap 💻</footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

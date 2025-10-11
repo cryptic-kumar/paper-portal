@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>Recommender Dashboard</title>
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Poppins", sans-serif;
+      }
+      .navbar {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      h2,
+      h3 {
+        margin-bottom: 20px;
+      }
+      .card {
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .btn {
+        border-radius: 5px;
+      }
+      .table thead {
+        background-color: #343a40;
+        color: white;
+      }
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
+      .download-link {
+        color: #0d6efd;
+        text-decoration: none;
+      }
+      .download-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'success' if category=='success' else 'danger' }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">📄 Paper Portal</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2>Welcome, {{ current_user.username }}</h2>
+
+      <div class="card p-4 mt-4">
+        <h3>Papers Pending Review</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Abstract</th>
+              <th>Download</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for paper in papers %}
+            <tr>
+              <td>{{ paper.title }}</td>
+              <td>{{ paper.abstract }}</td>
+              <td>
+                <a
+                  href="{{ url_for('recommender.download_paper', filename=paper.filename) }}"
+                  class="download-link"
+                  >Download</a
+                >
+              </td>
+              <td>
+                <a
+                  href="{{ url_for('recommender.review_paper', paper_id=paper.id, action='accept') }}"
+                  class="btn btn-success btn-sm"
+                  >Accept</a
+                >
+                <a
+                  href="{{ url_for('recommender.review_paper', paper_id=paper.id, action='reject') }}"
+                  class="btn btn-danger btn-sm"
+                  >Reject</a
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center">No papers pending review.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
