@@ -1,111 +1,76 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="card p-4 mb-4 shadow-sm" style="border-radius: 10px">
+    <h2>Welcome, {{ current_user.username }}</h2>
+    <p class="text-muted">
+      Here you can view and manage your submitted papers.
+    </p>
+  </div>
 
-    <title>Publisher Dashboard</title>
-
-    <style>
-      body {
-        background-color: #f8f9fa;
-        font-family: "Poppins", sans-serif;
-      }
-      .card {
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-      h2 {
-        margin-bottom: 20px;
-      }
-      table {
-        background: white;
-      }
-      .btn-primary {
-        border-radius: 5px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Flash Messages -->
-    <div class="container mt-3">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div
-        class="alert alert-{{ 'success' if category=='success' else 'danger' }} alert-dismissible fade show"
-        role="alert"
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>My Papers</h3>
+    <div>
+      <a href="{{ url_for('publisher.submit_paper') }}" class="btn btn-primary"
+        >Submit New Paper</a
       >
-        {{ message }}
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-      {% endfor %} {% endif %} {% endwith %}
+
+      {% if current_user.role == 'Publisher' %}
+      <a
+        href="{{ url_for('publisher.request_upgrade') }}"
+        class="btn btn-outline-warning ms-2"
+        >Become Recommender</a
+      >
+      {% endif %}
     </div>
+  </div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">📄 Paper Portal</a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container">
-      <div class="card p-4 mb-4">
-        <h2>Welcome, {{ current_user.username }}</h2>
-        <p class="text-muted">
-          Here you can view and manage your submitted papers.
-        </p>
-      </div>
-
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>My Papers</h3>
-        <a
-          href="{{ url_for('publisher.submit_paper') }}"
-          class="btn btn-primary"
-          >Submit New Paper</a
-        >
-      </div>
-
-      <div class="card p-3">
-        <table class="table table-striped mb-0">
-          <thead class="table-dark">
-            <tr>
-              <th>Title</th>
-              <th>Abstract</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for paper in papers %}
-            <tr>
-              <td>{{ paper.title }}</td>
-              <td>{{ paper.abstract }}</td>
-              <td>{{ paper.status }}</td>
-            </tr>
+  <div class="card p-3 shadow-sm" style="border-radius: 10px">
+    <table class="table table-striped mb-0 table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Title</th>
+          <th>Abstract</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for paper in papers %}
+        <tr>
+          <td>{{ paper.title }}</td>
+          <td>{{ paper.abstract | truncate(50) }}</td>
+          <td>
+            {% if paper.status == 'Accepted' %}
+            <span class="badge bg-success">Accepted</span>
+            {% elif paper.status == 'Rejected' %}
+            <span class="badge bg-danger">Rejected</span>
             {% else %}
-            <tr>
-              <td colspan="3" class="text-center">No papers submitted yet.</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </body>
-</html>
+            <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+          <td>
+            {{ paper.submitted_at.strftime('%Y-%m-%d') if paper.submitted_at
+            else 'N/A' }}
+          </td>
+          <td>
+            {% if paper.status == 'Accepted' %}
+            <span class="badge bg-success">Accepted</span>
+            {% elif paper.status == 'Rejected' %}
+            <span class="badge bg-danger">Rejected</span>
+            <br />
+            <small class="text-danger">Reason: {{ paper.feedback }}</small> {%
+            else %}
+            <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" class="text-center py-3">No papers submitted yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

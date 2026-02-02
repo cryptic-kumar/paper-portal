@@ -26,11 +26,11 @@ def register():
             username=form.username.data,
             email=form.email.data,
             password=hashed_pw,
-            role=form.role.data
+            role='Publisher'
         )
         db.session.add(user)
         db.session.commit()
-        flash('Account created successfully! You can now log in.', 'success')
+        flash('Account created! You are now a Publisher.', 'success')
         return redirect(url_for('auth.login'))
     return render_template('register.html', form=form)
 

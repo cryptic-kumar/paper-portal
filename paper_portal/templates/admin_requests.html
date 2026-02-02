@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <h2>Promotion Requests</h2>
+  {% if requests %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Proof Provided</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for req in requests %}
+      <tr>
+        <td>{{ req.user.username }}</td>
+        <td>{{ req.user.email }}</td>
+        <td>{{ req.proof_text }}</td>
+        <td>
+          <a
+            href="{{ url_for('admin.handle_request', req_id=req.id, action='approve') }}"
+            class="btn btn-success btn-sm"
+            >Approve</a
+          >
+          <a
+            href="{{ url_for('admin.handle_request', req_id=req.id, action='reject') }}"
+            class="btn btn-danger btn-sm"
+            >Reject</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No pending requests.</p>
+  {% endif %}
+</div>
+{% endblock %}

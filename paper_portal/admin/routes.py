@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from ..models import User, Paper
 from ..extensions import db
+from paper_portal.models import User, Paper, RoleRequest, db
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -70,3 +71,35 @@ def delete_paper(paper_id):
     db.session.commit()
     flash(f"Paper '{paper.title}' deleted.", "success")
     return redirect(url_for('admin.dashboard'))
+
+
+@admin_bp.route('/requests')
+@login_required
+def view_requests():
+    # Sirf admin access kare
+    if current_user.role != 'Admin':
+        return redirect(url_for('auth.login'))
+        
+    # Sirf 'Pending' requests nikalo
+    requests = RoleRequest.query.filter_by(status='Pending').all()
+    return render_template('admin_requests.html', requests=requests)
+
+@admin_bp.route('/request/<int:req_id>/<action>')
+@login_required
+def handle_request(req_id, action):
+    if current_user.role != 'Admin':
+        return redirect(url_for('auth.login'))
+
+    req = RoleRequest.query.get_or_404(req_id)
+    user = User.query.get(req.user_id)
+
+    if action == 'approve':
+        user.role = 'Recommender'  # User ka role upgrade!
+        req.status = 'Approved'
+        flash(f'Approved! {user.username} is now a Recommender.', 'success')
+    elif action == 'reject':
+        req.status = 'Rejected'
+        flash(f'Request rejected for {user.username}.', 'danger')
+    
+    db.session.commit()
+    return redirect(url_for('admin.view_requests'))

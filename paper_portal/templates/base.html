@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -44,7 +44,9 @@
       .card {
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
       .card:hover {
         transform: translateY(-4px);
@@ -94,10 +96,48 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated %} {% if current_user.role ==
+            'Admin' %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+              <a class="nav-link" href="{{ url_for('admin.dashboard') }}"
+                >Dashboard</a
+              >
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin.view_requests') }}"
+                >Requests</a
+              >
+            </li>
+
+            {% elif current_user.role == 'Recommender' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('recommender.dashboard') }}"
+                >Dashboard</a
+              >
+            </li>
+
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('publisher.dashboard') }}"
+                >Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{{ url_for('publisher.request_upgrade') }}"
+                >Become Recommender</a
+              >
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a
+                class="nav-link btn btn-danger text-white ms-2"
+                href="{{ url_for('auth.logout') }}"
+                >Logout</a
+              >
+            </li>
+
             {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
