@@ -7,4 +7,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # Max upload size = 16 MB
+    
     ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
